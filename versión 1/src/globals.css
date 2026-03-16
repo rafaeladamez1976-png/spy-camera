@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg-primary: #0F1419;
+  --bg-secondary: #1A2332;
+  --bg-tertiary: #243044;
+  --accent: #00D4AA;
+  --accent-dim: #00A88A;
+  --warning: #FF6B35;
+  --danger: #FF3B5C;
+  --text-primary: #E8ECF0;
+  --text-secondary: #8B9BB4;
+  --text-muted: #5A6A80;
+  --border: #2A3A50;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overscroll-behavior: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Mobile tap highlight removal */
+button, a, [role="button"], .cursor-pointer {
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-primary: #0F1419;
+    --bg-secondary: #1A2332;
+    --bg-tertiary: #243044;
+    --accent: #00D4AA;
+    --accent-dim: #00A88A;
+    --warning: #FF6B35;
+    --danger: #FF3B5C;
+    --text-primary: #E8ECF0;
+    --text-secondary: #8B9BB4;
+    --text-muted: #5A6A80;
+    --border: #2A3A50;
+  }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 2px;
+}
+
+/* Minimal animations */
+@keyframes scan-line {
+  0% { top: 0%; }
+  100% { top: 100%; }
+}
+
+.animate-scan-line {
+  animation: scan-line 2s linear infinite;
+}
+
+/* Glass morphism card */
+.glass-card {
+  background: rgba(26, 35, 50, 0.8);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(42, 58, 80, 0.5);
+}
+
+/* Gradient backgrounds */
+.gradient-accent {
+  background: linear-gradient(135deg, #00D4AA 0%, #00A88A 100%);
+}
+
+.gradient-warning {
+  background: linear-gradient(135deg, #FF6B35 0%, #FF3B5C 100%);
+}
+
+.gradient-bg {
+  background: linear-gradient(180deg, #0F1419 0%, #1A2332 100%);
+}

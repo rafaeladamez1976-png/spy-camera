@@ -215,138 +215,183 @@ export default function MagneticDetector() {
   };
 
   return (
-    <div className="px-5 py-6 space-y-5">
+    <div className="pb-20">
       {/* Header */}
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-[#FF6B35]/10 flex items-center justify-center">
-          <Magnet className="w-5 h-5 text-[#FF6B35]" />
-        </div>
-        <div>
-          <h1 className="text-lg font-bold">Magnetic Detector</h1>
-          <p className="text-xs text-[#5A6A80]">Detect electronic magnetic fields</p>
+      <div className="px-5 py-6 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+            <Magnet className="w-6 h-6 text-amber-500 stroke-[1.5]" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold tracking-tight glow-text-cyan text-white">Flux Sensor</h1>
+            <p className="text-[10px] font-mono text-amber-500/60 uppercase tracking-widest mt-0.5">High-Frequency EMF Mapping</p>
+          </div>
         </div>
       </div>
 
       {/* Sensor Warning */}
       {!sensorAvailable && (
         <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mx-5 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 backdrop-blur-md"
         >
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
             <div>
-              <p className="font-semibold text-sm text-amber-400">Magnetometer Unavailable</p>
-              <p className="text-xs text-[#8B9BB4] mt-1 leading-relaxed">
-                Your device doesn't support magnetic field detection. Results are simulated for demonstration purposes only.
+              <p className="font-bold text-xs text-amber-500 uppercase tracking-tight">Core Sensor Offline</p>
+              <p className="text-[10px] text-slate-400 mt-1 leading-relaxed font-medium uppercase opacity-70">
+                Hardware non-compliant. Switching to edge-node simulation for session diagnostics.
               </p>
             </div>
           </div>
         </motion.div>
       )}
 
-      {/* Gauge */}
-      <div className="glass-card rounded-2xl p-6 space-y-4">
-        <div className="flex justify-between items-end">
+      {/* Main Analysis Panel */}
+      <div className="mx-5 hud-card rounded-[2.5rem] p-6 space-y-6 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-32 h-32 bg-cyan-500/5 blur-3xl -z-10" />
+        
+        <div className="flex justify-between items-start">
           <div className="space-y-1">
-            <p className="text-xs text-[#5A6A80] font-medium uppercase tracking-wider">Live Signal</p>
-            <Sparkline data={history} width={120} height={40} color={value >= THRESHOLD ? "#F87171" : "#00D4AA"} />
+            <div className="flex items-center gap-2">
+              <div className="w-1.5 h-1.5 rounded-full bg-cyan-500 animate-pulse" />
+              <p className="text-[10px] text-slate-500 font-mono font-bold uppercase tracking-widest">Spectral Stream</p>
+            </div>
+            <div className="pt-2">
+              <Sparkline data={history} width={100} height={30} color={value >= THRESHOLD ? "#FF2D55" : "#00F5FF"} />
+            </div>
           </div>
           <div className="text-right">
-            <p className="text-2xl font-bold font-mono tracking-tighter">{Math.round(value)}<span className="text-xs text-[#5A6A80] ml-1">µT</span></p>
+             <div className="text-3xl font-bold font-mono text-white tracking-tighter tabular-nums">
+               {Math.round(value)}
+               <span className="text-[10px] text-cyan-500/60 ml-1 font-light uppercase">µT</span>
+             </div>
+             <p className="text-[9px] font-mono text-slate-500 uppercase tracking-tighter">Current Intensity</p>
           </div>
         </div>
-        <MagneticGauge value={value} threshold={THRESHOLD} />
-        <div className="flex justify-center mt-2">
-          <StatusBadge status={getStatus()} customLabel={null} />
+
+        <div className="relative py-4">
+           <MagneticGauge value={value} threshold={THRESHOLD} />
+           {/* Decorative elements around gauge */}
+           <div className="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+              <div className="w-48 h-48 border border-white/20 rounded-full" />
+              <div className="absolute w-56 h-56 border border-white/10 rounded-full border-dashed animate-spin-slow" />
+           </div>
+        </div>
+
+        <div className="flex justify-center">
+          <div className={`px-4 py-1.5 rounded-full border text-[10px] font-mono font-bold uppercase tracking-widest ${
+            getStatus() === 'danger' ? 'bg-red-500/20 border-red-500 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.3)]' :
+            getStatus() === 'warning' ? 'bg-amber-500/20 border-amber-500 text-amber-500' :
+            'bg-emerald-500/20 border-emerald-500 text-emerald-500'
+          }`}>
+            {getStatus() === 'danger' ? 'Critial Anomaly' :
+             getStatus() === 'warning' ? 'Localized Spike' : 'Nominal Flux'}
+          </div>
         </div>
       </div>
 
-      {/* Alert */}
+      {/* Active Alert */}
       <AnimatePresence>
         {alertTriggered && isActive && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.95 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.95 }}
-            className="p-4 rounded-2xl bg-red-500/10 border border-red-500/20"
+            initial={{ opacity: 0, scale: 0.95, y: 10 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.95, y: 10 }}
+            className="mx-5 p-4 rounded-2xl bg-red-500/15 border border-red-500/30 shadow-[0_0_20px_rgba(239,68,68,0.1)]"
           >
-            <div className="flex items-center gap-3">
-              <Activity className="w-5 h-5 text-red-400 animate-pulse" />
+            <div className="flex items-center gap-4">
+              <div className="w-10 h-10 rounded-xl bg-red-500/20 flex items-center justify-center shrink-0">
+                <Activity className="w-5 h-5 text-red-500 animate-pulse" />
+              </div>
               <div>
-                <p className="font-semibold text-sm text-red-400">Strong signal detected</p>
-                <p className="text-xs text-[#5A6A80] mt-0.5">Move slowly to locate the source</p>
+                <p className="font-bold text-xs text-red-500 uppercase tracking-tight">Signal Collision Detected</p>
+                <p className="text-[10px] text-slate-400 font-medium uppercase tracking-tighter opacity-80 mt-0.5">Triangulating EMF source. Maintain current vector.</p>
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Controls */}
-      <div className="flex gap-3">
+      {/* Operational Controls */}
+      <div className="px-5 flex gap-4">
         <motion.button
-          whileTap={{ scale: 0.97 }}
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
           onClick={isActive ? stopDetection : requestPermission}
-          className={`flex-1 py-4 rounded-2xl font-semibold text-base ${isActive
-            ? 'bg-red-500/10 text-red-400 border border-red-500/20'
-            : 'gradient-accent text-[#0F1419] shadow-lg shadow-[#00D4AA]/20'
+          className={`flex-1 py-5 rounded-2xl font-bold text-base tracking-tight transition-all uppercase ${isActive
+            ? 'bg-red-500/10 text-red-500 border border-red-500/30'
+            : 'bg-cyan-500 text-black shadow-[0_8px_25px_rgba(0,245,255,0.2)]'
             }`}
         >
-          {isActive ? 'Stop' : 'Start Detection'}
+          {isActive ? 'Cease Link' : 'Initialize Probes'}
         </motion.button>
         <button
           onClick={calibrate}
-          className="w-14 rounded-2xl bg-[#1A2332] border border-[#2A3A50] flex items-center justify-center"
+          className="w-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center text-slate-500 hover:text-white transition-colors"
         >
-          <RotateCcw className="w-5 h-5 text-[#5A6A80]" />
+          <RotateCcw className="w-6 h-6" />
         </button>
       </div>
 
-      {/* Baseline info */}
+      {/* Baseline Telemetry */}
       {baseline !== null && (
-        <p className="text-xs text-[#5A6A80] text-center">
-          Baseline calibrated at {Math.round(baseline)} µT
-        </p>
+        <div className="flex items-center justify-center gap-2">
+           <div className="w-1 h-1 rounded-full bg-slate-500" />
+           <p className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">
+             Ref Baseline: {Math.round(baseline)} µT
+           </p>
+        </div>
       )}
 
-      {/* Recent Peaks */}
+      {/* Event Log */}
       {peaks.length > 0 && (
-        <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <h3 className="text-xs font-semibold text-[#5A6A80] uppercase tracking-wider">
-              Recent Peaks
+        <div className="mx-5 space-y-3 pt-2">
+          <div className="flex items-center justify-between px-1">
+            <h3 className="text-[9px] font-mono font-bold text-slate-500 uppercase tracking-[0.2em]">
+              Anomaly Log
             </h3>
             <button
               onClick={saveReading}
-              className="text-xs text-[#00D4AA] font-medium flex items-center gap-1"
+              className="text-[9px] font-mono font-bold text-cyan-500 uppercase tracking-widest flex items-center gap-2 hover:opacity-80 transition-opacity"
             >
-              <Save className="w-3 h-3" /> Save
+              <Save className="w-3.5 h-3.5" /> Push to Cloud
             </button>
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-2">
             {peaks.map((peak, i) => (
-              <div key={i} className="flex items-center justify-between p-2.5 rounded-xl bg-[#1A2332]/60 border border-[#2A3A50]/30">
-                <span className="text-xs text-[#8B9BB4]">{peak.time}</span>
-                <span className={`text-sm font-semibold ${peak.value >= THRESHOLD ? 'text-red-400' : 'text-amber-400'
-                  }`}>
-                  {peak.value} µT
-                </span>
-              </div>
+              <motion.div 
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                key={i} 
+                className="flex items-center justify-between p-3.5 rounded-2xl bg-white/[0.03] border border-white/5"
+              >
+                <div className="flex items-center gap-3">
+                   <div className={`w-1.5 h-1.5 rounded-full ${peak.value >= THRESHOLD ? 'bg-red-500' : 'bg-amber-400'}`} />
+                   <span className="text-[10px] font-mono text-slate-500">{peak.time}</span>
+                </div>
+                <div className={`text-xs font-mono font-bold ${peak.value >= THRESHOLD ? 'text-red-500' : 'text-amber-400'}`}>
+                  +{peak.value} µT <span className="text-[9px] opacity-60">MAG_FLUX</span>
+                </div>
+              </motion.div>
             ))}
           </div>
         </div>
       )}
 
-      {/* How It Works */}
-      <div className="p-4 rounded-xl bg-[#1A2332] border border-[#2A3A50]">
-        <h3 className="text-sm font-semibold text-[#E8ECF0] mb-2">How it works</h3>
-        <p className="text-xs text-[#8B9BB4] leading-relaxed">
-          Electronic devices emit magnetic fields. Move your phone slowly near suspicious areas. Spikes above {THRESHOLD} µT may indicate hidden electronics like cameras or recording devices.
+      {/* Operational Protocol */}
+      <div className="mx-5 p-5 rounded-3xl bg-black/40 border border-white/5 space-y-2">
+        <h3 className="text-[10px] font-mono font-bold text-slate-400 uppercase tracking-widest">Protocol 04-EMF</h3>
+        <p className="text-[10px] text-slate-500 leading-relaxed font-medium">
+          Electronics generate unique magnetic signatures. Traverse target zones slowly. Persistent flux spikes exceeding {THRESHOLD} µT 
+          correlate with high-probability hidden transceivers or recording hardware.
         </p>
       </div>
 
-      <DisclaimerBanner compact />
+      <div className="pb-8">
+         <DisclaimerBanner compact />
+      </div>
     </div>
   );
 }

@@ -4,24 +4,30 @@ import { createPageUrl } from '@/utils';
 import { ChevronRight } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function ScanToolCard({ icon: Icon, title, description, page, color = '#00D4AA' }) {
+export default function ScanToolCard({ icon: Icon, title, description, page, color = '#00F5FF' }) {
   return (
-    <motion.div whileTap={{ scale: 0.99 }}>
+    <motion.div 
+      whileHover={{ x: 4 }}
+      whileTap={{ scale: 0.98 }}
+    >
       <Link
         to={createPageUrl(page)}
-        className="flex items-center gap-4 p-4 rounded-2xl bg-[#1A2332] border border-[#2A3A50] hover:border-[#2A3A50]/80 hover:bg-[#1F2A3C] transition-all duration-200"
+        className="hud-card flex items-center gap-5 p-5 rounded-[2rem] transition-all group"
       >
         <div
-          className="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0"
-          style={{ backgroundColor: `${color}12` }}
+          className="w-16 h-16 rounded-2xl flex items-center justify-center shrink-0 relative overflow-hidden"
+          style={{ backgroundColor: `${color}10` }}
         >
-          <Icon className="w-6 h-6" style={{ color }} />
+          <div className="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity" />
+          <Icon className="w-7 h-7 relative z-10" style={{ color }} />
         </div>
         <div className="flex-1 min-w-0">
-          <h3 className="font-semibold text-base text-[#E8ECF0] mb-1">{title}</h3>
-          <p className="text-xs text-[#5A6A80] leading-relaxed">{description}</p>
+          <h3 className="font-bold text-base text-white mb-1 group-hover:text-cyan-400 transition-colors">{title}</h3>
+          <p className="text-[11px] text-slate-500 font-medium leading-normal uppercase tracking-wide opacity-70 italic">{description}</p>
         </div>
-        <ChevronRight className="w-5 h-5 text-[#5A6A80]/50 shrink-0" />
+        <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-cyan-500/20 transition-colors">
+          <ChevronRight className="w-5 h-5 text-slate-600 group-hover:text-cyan-400 transition-colors" />
+        </div>
       </Link>
     </motion.div>
   );

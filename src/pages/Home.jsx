@@ -12,80 +12,90 @@ export default function Home() {
   const navigate = useNavigate();
 
   return (
-    <div className="px-5 py-6 space-y-6">
+    <div className="px-6 py-8 space-y-8 min-h-screen mesh-bg relative overflow-hidden">
+      {/* Decorative HUD Elements */}
+      <div className="absolute top-0 right-0 w-64 h-64 bg-cyan-500/5 blur-[100px] -z-10" />
+      <div className="absolute bottom-0 left-0 w-64 h-64 bg-red-500/5 blur-[100px] -z-10" />
+
       {/* Header */}
-      <div className="text-center pt-6 pb-4">
-        <div className="w-20 h-20 rounded-3xl gradient-accent mx-auto flex items-center justify-center mb-5 shadow-xl shadow-[#00D4AA]/15">
-          <Shield className="w-10 h-10 text-[#0F1419]" />
+      <div className="text-center pt-8 pb-4 relative">
+        <div className="w-24 h-24 rounded-[2rem] bg-black/40 backdrop-blur-xl border border-white/10 mx-auto flex items-center justify-center mb-6 shadow-2xl relative group">
+          <div className="absolute inset-0 rounded-[2rem] bg-cyan-500/20 blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+          <Shield className="w-10 h-10 text-cyan-400 drop-shadow-[0_0_8px_rgba(0,245,255,0.5)]" />
         </div>
-        <h1 className="text-2xl font-bold tracking-tight leading-tight">
-          Spy Camera Finder
+        <h1 className="text-3xl font-bold tracking-tight text-white glow-text-cyan">
+          SPECTRE <span className="font-light opacity-50">AI</span>
         </h1>
-        <p className="text-sm text-[#8B9BB4] mt-5 leading-relaxed max-w-[280px] mx-auto font-medium">
-          Scan your room for hidden cameras in under 30 seconds
+        <p className="text-[10px] font-mono text-slate-500 uppercase tracking-[0.3em] mt-2">
+          Sub-surface Intelligence Agency
         </p>
       </div>
 
-      {/* System Stats */}
-      <SystemStats />
+      {/* System Stats Section */}
+      <div className="relative isolate">
+        <SystemStats />
+      </div>
 
       {/* Main CTA */}
-      <motion.button
-        whileTap={{ scale: 0.98 }}
-        onClick={() => navigate(createPageUrl('WifiScan'))}
-        className="w-full relative overflow-hidden py-5 rounded-3xl gradient-accent text-[#0F1419] font-bold text-lg shadow-xl shadow-[#00D4AA]/20 hover:shadow-[#00D4AA]/30 transition-all"
-      >
-        <span className="flex items-center justify-center gap-3">
-          <Search className="w-6 h-6" />
-          Start Room Scan
-        </span>
-      </motion.button>
+      <div className="px-2">
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => navigate(createPageUrl('WifiScan'))}
+          className="w-full relative group overflow-hidden py-6 rounded-3xl bg-cyan-500 text-black font-extrabold text-lg shadow-[0_8px_30px_rgba(0,245,255,0.25)] transition-all"
+        >
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
+          <span className="flex items-center justify-center gap-3 tracking-tight uppercase">
+            <Search className="w-6 h-6 stroke-[2.5]" />
+            Initiate Sector Scan
+          </span>
+        </motion.button>
+      </div>
 
-      {/* Scan Tools */}
-      <div className="space-y-4 pt-2">
-        <h2 className="text-xs font-semibold text-[#5A6A80] uppercase tracking-wider px-1">
-          Detection Methods
-        </h2>
-        <div className="space-y-3">
+      {/* Scan Tools Grid */}
+      <div className="space-y-5 pt-4">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-[10px] font-mono font-bold text-slate-500 uppercase tracking-widest">
+            Detection Modules
+          </h2>
+          <div className="h-[1px] flex-1 bg-white/5 ml-4" />
+        </div>
+        
+        <div className="grid grid-cols-1 gap-4">
           <ScanToolCard
             icon={Wifi}
-            title="WiFi Device Scan"
-            description="Detect suspicious devices on your network"
+            title="Network Probe"
+            description="Deep packet analysis for hidden IoT nodes"
             page="WifiScan"
-            color="#00D4AA"
+            color="var(--accent)"
           />
           <ScanToolCard
             icon={Camera}
-            title="Lens Scanner"
-            description="Use your camera to find lens reflections"
+            title="Optic Sentry"
+            description="Neural glint detection for pinhole lenses"
             page="LensScanner"
-            color="#00BFFF"
+            color="#FF2D55"
           />
           <ScanToolCard
             icon={Magnet}
-            title="Magnetic Detector"
-            description="Detect magnetic fields from electronic devices"
+            title="Mag-Field Sensor"
+            description="EMF resonance mapping for electronics"
             page="MagneticDetector"
-            color="#FF6B35"
-          />
-          <ScanToolCard
-            icon={BookOpen}
-            title="Privacy Guide"
-            description="Expert tips to protect your privacy"
-            page="PrivacyGuide"
-            color="#A78BFA"
+            color="#FFB800"
           />
         </div>
       </div>
 
-      {/* Trust Badge */}
-      <div className="flex items-center justify-center gap-2 py-4">
-        <Shield className="w-4 h-4 text-[#00D4AA]" />
-        <p className="text-xs text-[#5A6A80]">Trusted by 50,000+ travelers</p>
+      {/* Verification Badge */}
+      <div className="flex items-center justify-center gap-3 py-6 grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all cursor-default">
+        <div className="h-[1px] w-8 bg-slate-700" />
+        <Shield className="w-4 h-4 text-cyan-500" />
+        <p className="text-[10px] font-mono text-slate-400 uppercase tracking-tighter">Verified Security Suite v4.2.0</p>
+        <div className="h-[1px] w-8 bg-slate-700" />
       </div>
 
-      {/* Disclaimer */}
-      <div className="pt-2">
+      {/* Footer Info */}
+      <div className="pb-10">
         <DisclaimerBanner compact />
       </div>
     </div>

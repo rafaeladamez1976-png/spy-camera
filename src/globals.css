@@ -1,93 +1,121 @@
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --bg-primary: #0F1419;
-  --bg-secondary: #1A2332;
-  --bg-tertiary: #243044;
-  --accent: #00D4AA;
-  --accent-dim: #00A88A;
-  --warning: #FF6B35;
-  --danger: #FF3B5C;
-  --text-primary: #E8ECF0;
-  --text-secondary: #8B9BB4;
-  --text-muted: #5A6A80;
-  --border: #2A3A50;
+  --bg-primary: #05080A;
+  --bg-secondary: #0A0F14;
+  --bg-tertiary: #10161D;
+  --accent: #00F5FF; /* Electric Cyan */
+  --accent-dim: #00A3AB;
+  --accent-glow: rgba(0, 245, 255, 0.4);
+  --warning: #FFB800;
+  --danger: #FF2D55; /* Radical Red */
+  --safe: #00FF9D;
+  --text-primary: #FFFFFF;
+  --text-secondary: #8E9BA6;
+  --text-muted: #56616B;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-bright: rgba(255, 255, 255, 0.15);
 }
 
 body {
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family: 'Space Grotesk', -apple-system, BlinkMacSystemFont, sans-serif;
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  -moz-osx-software-smoothing: grayscale;
   overscroll-behavior: none;
-  -webkit-overflow-scrolling: touch;
+  background-image: 
+    radial-gradient(circle at 50% -20%, rgba(0, 245, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 0% 0%, rgba(255, 45, 85, 0.03) 0%, transparent 35%);
+  background-attachment: fixed;
 }
 
-/* Mobile tap highlight removal */
-button, a, [role="button"], .cursor-pointer {
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
-  -webkit-user-select: none;
+.font-mono {
+  font-family: 'JetBrains Mono', monospace;
 }
 
-/* Dark theme support */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg-primary: #0F1419;
-    --bg-secondary: #1A2332;
-    --bg-tertiary: #243044;
-    --accent: #00D4AA;
-    --accent-dim: #00A88A;
-    --warning: #FF6B35;
-    --danger: #FF3B5C;
-    --text-primary: #E8ECF0;
-    --text-secondary: #8B9BB4;
-    --text-muted: #5A6A80;
-    --border: #2A3A50;
-  }
+/* Premium HUD Effects */
+.hud-card {
+  background: rgba(10, 15, 20, 0.7);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  position: relative;
+  overflow: hidden;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 4px;
-}
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border);
-  border-radius: 2px;
+.hud-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border-bright), transparent);
 }
 
-/* Minimal animations */
+.hud-border {
+  border: 1px solid var(--border);
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.glow-text-cyan {
+  text-shadow: 0 0 10px var(--accent-glow);
+}
+
+.glow-text-red {
+  text-shadow: 0 0 10px rgba(255, 45, 85, 0.4);
+}
+
+/* Animations */
+@keyframes pulse-soft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.animate-pulse-soft {
+  animation: pulse-soft 3s ease-infinite;
+}
+
 @keyframes scan-line {
-  0% { top: 0%; }
-  100% { top: 100%; }
+  0% { transform: translateY(-100%); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(1000%); opacity: 0; }
 }
 
-.animate-scan-line {
-  animation: scan-line 2s linear infinite;
+.scan-overlay {
+  background: linear-gradient(to bottom, 
+    transparent 0%, 
+    rgba(0, 245, 255, 0.05) 50%, 
+    rgba(0, 245, 255, 0.2) 99%, 
+    rgba(0, 245, 255, 0.5) 100%
+  );
+  height: 100px;
+  width: 100%;
+  position: absolute;
+  pointer-events: none;
+  z-index: 10;
+  animation: scan-line 4s linear infinite;
 }
 
-/* Glass morphism card */
-.glass-card {
-  background: rgba(26, 35, 50, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(42, 58, 80, 0.5);
+/* Custom UI Components */
+.tap-highlight-none {
+  -webkit-tap-highlight-color: transparent;
 }
 
-/* Gradient backgrounds */
-.gradient-accent {
-  background: linear-gradient(135deg, #00D4AA 0%, #00A88A 100%);
+.mesh-bg {
+  background: 
+    radial-gradient(at 0% 0%, rgba(0, 245, 255, 0.1) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(255, 45, 85, 0.05) 0px, transparent 50%),
+    radial-gradient(at 100% 100%, rgba(0, 255, 157, 0.05) 0px, transparent 50%),
+    radial-gradient(at 0% 100%, rgba(167, 139, 250, 0.08) 0px, transparent 50%);
 }
 
-.gradient-warning {
-  background: linear-gradient(135deg, #FF6B35 0%, #FF3B5C 100%);
-}
-
-.gradient-bg {
-  background: linear-gradient(180deg, #0F1419 0%, #1A2332 100%);
+.bg-dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 24px 24px;
 }

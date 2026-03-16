@@ -187,57 +187,80 @@ export default function LensScanner() {
   return (
     <div className="flex flex-col min-h-screen">
       {/* Header */}
-      <div className="px-5 py-4 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-xl bg-[#00BFFF]/10 flex items-center justify-center">
-          <Camera className="w-5 h-5 text-[#00BFFF]" />
-        </div>
-        <div>
-          <h1 className="text-lg font-bold">Lens Scanner</h1>
-          <p className="text-xs text-[#5A6A80]">Detect camera lens reflections</p>
+      <div className="px-5 py-6 flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.1)]">
+            <Camera className="w-6 h-6 text-amber-500 stroke-[1.5]" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold tracking-tight glow-text-red text-white">Optic Sentry</h1>
+            <p className="text-[10px] font-mono text-amber-500/60 uppercase tracking-widest mt-0.5">Lens Glint Detection</p>
+          </div>
         </div>
       </div>
 
       {/* Camera View Area */}
-      <div className="relative mx-5 rounded-2xl overflow-hidden bg-[#0a0e13] border border-[#2A3A50] aspect-[3/4]">
+      <div className="relative mx-5 rounded-[2.5rem] overflow-hidden bg-[#05080A] border border-white/10 aspect-[3/4] shadow-2xl shadow-black">
         {/* Real camera feed */}
         <video
           ref={videoRef}
           autoPlay
           playsInline
           muted
-          className="absolute inset-0 w-full h-full object-cover"
+          className="absolute inset-0 w-full h-full object-cover opacity-80"
         />
         <canvas ref={canvasRef} className="hidden" />
 
-        {/* Real-time Metadata Overlay */}
+        {/* HUD Elements */}
         {isCameraReady && (
-          <div className="absolute top-4 left-4 z-30 flex flex-col gap-1">
-            <div className="px-2 py-1 rounded bg-black/60 backdrop-blur-md border border-white/10 flex items-center gap-2">
-              <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-              <span className="text-[10px] font-mono text-[#E8ECF0]">LIVE {fps} FPS</span>
+          <>
+            {/* Corners */}
+            <div className="absolute top-6 left-6 w-8 h-8 border-t-2 border-l-2 border-white/20 rounded-tl-lg" />
+            <div className="absolute top-6 right-6 w-8 h-8 border-t-2 border-r-2 border-white/20 rounded-tr-lg" />
+            <div className="absolute bottom-6 left-6 w-8 h-8 border-b-2 border-l-2 border-white/20 rounded-bl-lg" />
+            <div className="absolute bottom-6 right-6 w-8 h-8 border-b-2 border-r-2 border-white/20 rounded-br-lg" />
+            
+            {/* Metadata */}
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-30 px-3 py-1 bg-black/60 backdrop-blur-md rounded-full border border-white/10 flex items-center gap-3">
+               <div className="flex items-center gap-1.5">
+                  <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                  <span className="text-[9px] font-mono text-white uppercase tracking-tighter">REC</span>
+               </div>
+               <div className="w-[1px] h-3 bg-white/10" />
+               <span className="text-[9px] font-mono text-slate-400 uppercase">{resolution}</span>
+               <div className="w-[1px] h-3 bg-white/10" />
+               <span className="text-[9px] font-mono text-slate-400 uppercase">{fps} FPS</span>
             </div>
-            <div className="px-2 py-1 rounded bg-black/60 backdrop-blur-md border border-white/10">
-              <span className="text-[10px] font-mono text-[#8B9BB4]">{resolution}</span>
-            </div>
-          </div>
+          </>
         )}
 
         {/* Scan overlay */}
-        {isScanning && (
-          <>
-            {/* Scanning line */}
-            <motion.div
-              className="absolute left-0 right-0 h-0.5 bg-[#00BFFF] shadow-[0_0_12px_rgba(0,191,255,0.8)] z-10"
-              animate={{ top: ['0%', '100%'] }}
-              transition={{ duration: 2, repeat: Infinity, ease: 'linear' }}
-            />
-            {/* Grid */}
-            <div className="absolute inset-0 opacity-10 z-0" style={{
-              backgroundImage: 'linear-gradient(#00BFFF 1px, transparent 1px), linear-gradient(90deg, #00BFFF 1px, transparent 1px)',
-              backgroundSize: '40px 40px',
-            }} />
-          </>
-        )}
+        <AnimatePresence>
+          {isScanning && (
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="absolute inset-0 z-10 pointer-events-none"
+            >
+              {/* Scanning line */}
+              <motion.div
+                className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-red-500 to-transparent shadow-[0_0_20px_#FF2D55] opacity-80"
+                animate={{ top: ['0%', '100%'] }}
+                transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
+              />
+              {/* Grid */}
+              <div className="absolute inset-0 opacity-[0.03] z-0 bg-dot-grid" />
+              
+              {/* Central Crosshair */}
+              <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                <div className="w-40 h-40 border border-red-500/50 rounded-full" />
+                <div className="absolute w-8 h-[1px] bg-red-500" />
+                <div className="absolute h-8 w-[1px] bg-red-500" />
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Reflection Points */}
         <AnimatePresence>
@@ -250,11 +273,14 @@ export default function LensScanner() {
               className="absolute z-20"
               style={{ left: `${r.x}%`, top: `${r.y}%` }}
             >
-              <div className="relative">
-                <div className={`w-8 h-8 rounded-full border-2 flex items-center justify-center ${r.intensity > 70 ? 'border-red-400 bg-red-400/20' : 'border-amber-400 bg-amber-400/20'
-                  }`}>
-                  <div className={`w-2 h-2 rounded-full ${r.intensity > 70 ? 'bg-red-400' : 'bg-amber-400'
-                    }`} />
+              <div className="relative -translate-x-1/2 -translate-y-1/2">
+                <div className={`w-12 h-12 rounded-full border-2 border-dashed flex items-center justify-center animate-spin-slow ${
+                   r.intensity > 70 ? 'border-red-500 bg-red-500/10' : 'border-amber-400 bg-amber-400/10'
+                }`}>
+                   <div className="w-1 h-1 rounded-full bg-white shadow-[0_0_10px_white]" />
+                </div>
+                <div className="absolute top-10 left-1/2 -translate-x-1/2 px-1.5 py-0.5 bg-black/80 rounded border border-white/20 whitespace-nowrap">
+                  <span className="text-[8px] font-mono text-white">INTENSITY: {Math.round(r.intensity)}%</span>
                 </div>
               </div>
             </motion.div>
@@ -263,36 +289,44 @@ export default function LensScanner() {
 
         {/* Instruction text */}
         {!isScanning && !showResults && (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center px-6 bg-black/40 backdrop-blur-sm p-6 rounded-3xl border border-white/5">
-              <Camera className="w-12 h-12 text-[#00BFFF] mx-auto mb-3" />
-              <p className="text-sm text-white font-medium">
-                {cameraPermission === 'denied'
-                  ? 'Camera access denied. Enable in settings.'
-                  : 'Point camera at suspicious spots'}
-              </p>
-              <p className="text-xs text-[#8B9BB4] mt-1">Lenses reflect light in dark environments</p>
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="text-center px-8 space-y-4">
+              <div className="w-16 h-16 rounded-3xl bg-black/40 backdrop-blur-xl border border-white/10 mx-auto flex items-center justify-center shadow-2xl">
+                <Camera className="w-8 h-8 text-amber-500 opacity-80" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm text-white font-bold tracking-tight uppercase">
+                  {cameraPermission === 'denied'
+                    ? 'Optical Link Blocked'
+                    : 'System Ready'}
+                </p>
+                <p className="text-[10px] text-slate-500 font-mono tracking-wider max-w-[180px] mx-auto uppercase">
+                   Scan for unnatural glints or reflections in dark areas
+                </p>
+              </div>
             </div>
           </div>
         )}
-
       </div>
 
       {/* Controls */}
-      <div className="px-5 py-4 space-y-4">
+      <div className="px-5 py-6 space-y-6">
         {/* Flashlight + Sensitivity */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-6">
           <button
             onClick={() => setFlashOn(!flashOn)}
-            className={`w-12 h-12 rounded-xl flex items-center justify-center border transition-all ${flashOn
-                ? 'bg-amber-400/10 border-amber-400/30 text-amber-400'
-                : 'bg-[#1A2332] border-[#2A3A50] text-[#5A6A80]'
+            className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all duration-300 ${flashOn
+              ? 'bg-amber-500 border-amber-500 text-black shadow-[0_0_20px_rgba(245,158,11,0.4)]'
+              : 'bg-white/5 border-white/10 text-slate-500'
               }`}
           >
-            {flashOn ? <Flashlight className="w-5 h-5" /> : <FlashlightOff className="w-5 h-5" />}
+            {flashOn ? <Flashlight className="w-6 h-6" /> : <FlashlightOff className="w-6 h-6" />}
           </button>
-          <div className="flex-1">
-            <p className="text-xs text-[#5A6A80] mb-1.5">Sensitivity</p>
+          <div className="flex-1 space-y-2">
+            <div className="flex justify-between">
+              <span className="text-[10px] font-mono text-slate-500 uppercase tracking-widest">Gain Control</span>
+              <span className="text-[10px] font-mono text-amber-500">{sensitivity[0]}%</span>
+            </div>
             <Slider
               value={sensitivity}
               onValueChange={setSensitivity}
@@ -306,21 +340,22 @@ export default function LensScanner() {
         {/* Scan Button */}
         {!showResults && (
           <motion.button
-            whileTap={{ scale: 0.97 }}
+            whileTap={{ scale: 0.98 }}
             onClick={startScan}
             disabled={isScanning}
-            className={`w-full py-4 rounded-2xl font-semibold text-base transition-all ${isScanning
-                ? 'bg-[#243044] text-[#5A6A80]'
-                : 'bg-[#00BFFF] text-[#0F1419] shadow-lg shadow-[#00BFFF]/20'
+            className={`w-full py-5 rounded-2xl font-bold text-base tracking-tight transition-all uppercase ${isScanning
+              ? 'bg-white/5 text-slate-600 border border-white/10 cursor-not-allowed'
+              : 'bg-red-500 text-white shadow-[0_4px_25px_rgba(255,45,85,0.3)] hover:shadow-[0_4px_35px_rgba(255,45,85,0.5)]'
               }`}
           >
             {isScanning ? (
-              <span className="flex items-center justify-center gap-2">
-                <CircleDot className="w-5 h-5 animate-pulse" /> Scanning...
+              <span className="flex items-center justify-center gap-3">
+                <div className="w-2 h-2 rounded-full bg-white animate-pulse" /> 
+                System Cycling...
               </span>
             ) : (
-              <span className="flex items-center justify-center gap-2">
-                <Camera className="w-5 h-5" /> Start Scan
+              <span className="flex items-center justify-center gap-3">
+                <Camera className="w-5 h-5" /> Initiate Optical Probe
               </span>
             )}
           </motion.button>
@@ -329,32 +364,32 @@ export default function LensScanner() {
         {/* Results Summary */}
         {showResults && (
           <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="space-y-4"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="space-y-6"
           >
-            <div className={`p-5 rounded-2xl border ${reflections.length > 0
-                ? 'bg-amber-500/8 border-amber-500/30'
-                : 'bg-emerald-500/8 border-emerald-500/30'
-              }`}>
+            <div className={`hud-card rounded-3xl p-6 border-l-4 ${reflections.length > 0
+              ? 'border-l-amber-500 bg-amber-500/[0.03]'
+              : 'border-l-emerald-500 bg-emerald-500/[0.03]'
+            }`}>
               {reflections.length > 0 ? (
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center shrink-0">
-                    <AlertTriangle className="w-6 h-6 text-amber-400" />
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-amber-500/10 flex items-center justify-center shrink-0">
+                    <AlertTriangle className="w-7 h-7 text-amber-500 stroke-[1.5]" />
                   </div>
                   <div>
-                    <p className="font-bold text-base mb-1">{reflections.length} Reflection{reflections.length > 1 ? 's' : ''} Detected</p>
-                    <p className="text-sm text-[#8B9BB4] leading-relaxed">Physically inspect each bright spot. May be LEDs, glass, or reflective surfaces.</p>
+                    <h3 className="text-lg font-bold text-white uppercase tracking-tight">{reflections.length} Glint{reflections.length > 1 ? 's' : ''} Detected</h3>
+                    <p className="text-xs text-slate-400 font-medium leading-relaxed">High confidence optical reflections found. Cross-reference with physical inspection.</p>
                   </div>
                 </div>
               ) : (
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-xl bg-emerald-500/10 flex items-center justify-center shrink-0">
-                    <Camera className="w-6 h-6 text-emerald-400" />
+                <div className="flex items-center gap-4">
+                  <div className="w-14 h-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+                    <CheckCircle className="w-7 h-7 text-emerald-500 stroke-[1.5]" />
                   </div>
                   <div>
-                    <p className="font-bold text-base">Scan Complete</p>
-                    <p className="text-sm text-[#8B9BB4] mt-1">No obvious reflections found</p>
+                    <h3 className="text-lg font-bold text-white uppercase tracking-tight">Scan Resolved</h3>
+                    <p className="text-xs text-slate-400 font-medium">No suspicious optical signatures identified in current FOV.</p>
                   </div>
                 </div>
               )}
@@ -364,22 +399,25 @@ export default function LensScanner() {
               {reflections.length > 0 && (
                 <button
                   onClick={saveFindings}
-                  className="flex-1 py-3 rounded-2xl bg-[#1A2332] border border-[#2A3A50] text-sm font-medium text-[#8B9BB4] flex items-center justify-center gap-2"
+                  className="flex-1 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-white/10 transition-colors"
                 >
-                  <Save className="w-4 h-4" /> Save Findings
+                  <Save className="w-4 h-4" /> Save Data
                 </button>
               )}
               <button
                 onClick={() => { setShowResults(false); setReflections([]); }}
-                className="flex-1 py-3 rounded-2xl bg-[#1A2332] border border-[#2A3A50] text-sm font-medium text-[#8B9BB4] flex items-center justify-center gap-2"
+                className="flex-1 py-4 rounded-2xl bg-white/5 border border-white/10 text-white font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-3 hover:bg-white/10 transition-colors"
               >
-                <RotateCcw className="w-4 h-4" /> Rescan
+                <RotateCcw className="w-4 h-4" /> Cycle Probe
               </button>
             </div>
 
-            <div className="flex items-start gap-3 p-4 rounded-xl bg-[#243044]/40 border border-[#2A3A50]">
-              <Info className="w-5 h-5 text-[#5A6A80] mt-0.5 shrink-0" />
-              <p className="text-xs text-[#8B9BB4] leading-relaxed">Visual assistance only. Reflections can be LEDs, mirrors, or glass. Manually verify suspicious areas.</p>
+            <div className="flex items-start gap-4 p-5 rounded-2xl bg-black/40 border border-white/5">
+              <Info className="w-5 h-5 text-slate-600 mt-0.5 shrink-0" />
+              <p className="text-[10px] text-slate-500 leading-relaxed uppercase tracking-tight">
+                Optical analysis provides visual assistance only. False positives may occur from glass, mirrors, or LEDs. 
+                Manual validation is required for high-confidence determination.
+              </p>
             </div>
           </motion.div>
         )}
